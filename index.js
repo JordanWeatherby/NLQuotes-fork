@@ -4,11 +4,8 @@ import morgan from 'morgan';
 import cors from 'cors';
 import quoteModel from './models/postgres.js';
 import axios from 'axios';
-import fs from 'fs';
 import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
-import pkg from 'pg';
-const { Pool } = pkg;
 
 // Load environment variables
 dotenv.config();
@@ -415,7 +412,7 @@ app.get('/health', async (req, res) => {
         }
         
         res.json(health);
-    } catch (error) {
+    } catch {
         health.status = 'DOWN';
         health.error = 'Service unavailable';
         health.database = 'error';
@@ -465,7 +462,7 @@ app.get('/test', (req, res) => {
 });
 
 // Add a global error handler with connection error recovery
-app.use((err, req, res, next) => {
+app.use((err, _req, res) => {
     console.error('Unhandled application error:', err.stack);
     
     // Check if it's a database connection error
@@ -496,7 +493,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-const errorHandler = (error, req, res, next) => {
+const errorHandler = (error, _req, res, next) => {
     console.error(error.message);
     if (error.name === 'CastError') {
         return res.status(400).send({ error: 'malformatted id' });

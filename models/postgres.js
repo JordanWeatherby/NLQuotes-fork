@@ -19,20 +19,14 @@ const pool = new Pool({
 });
 
 // Better connection error handling
-pool.on('error', (err, client) => {
+pool.on('error', (err) => {
   console.error('PostgreSQL Error:', err.message);
 });
 
-// Track connection events
-let totalConnections = 0;
-pool.on('connect', () => {
-  totalConnections++;
+pool.on('acquire', () => {
 });
 
-pool.on('acquire', (client) => {
-});
-
-pool.on('remove', (client) => {
+pool.on('remove', () => {
 });
 
 // Warm up the connection pool with one verified connection
@@ -138,7 +132,7 @@ const quoteModel = {
   },
   
   // Search quotes with pagination using PostgreSQL FTS
-  async search({ searchTerm, searchPath, gameName, selectedValue, year, sortOrder, page = 1, limit = 10, exactPhrase = false }) {
+  async search({ searchTerm, gameName, selectedValue, year, sortOrder, page = 1, limit = 10, exactPhrase = false }) {
     // Validate and sanitize inputs
     // Ensure page and limit are positive integers
     page = Math.max(1, parseInt(page) || 1);
@@ -147,7 +141,6 @@ const quoteModel = {
     const offset = (page - 1) * limit;
     const params = [];
     let paramIndex = 1;
-    const ftsLanguage = 'simple'; // Use 'simple' instead of 'english' to preserve stop words
 
     // We only search in text now, so no need to validate searchPath
     // log search parameters
@@ -215,7 +208,7 @@ const quoteModel = {
         } else {
           console.error("Invalid year parameter:", year);
         }
-      } catch (e) {
+      } catch {
         console.error("Invalid year parameter:", year);
         // Handle invalid year input appropriately, e.g., return error or empty result
         return { data: [], total: 0, totalQuotes: 0 };
@@ -399,7 +392,6 @@ if (sortOrder === 'default') {
     let client;
     try {
       client = await pool.connect();
-      const startTime = Date.now();
       const result = await client.query(query);
       return result.rows;
     } catch (error) {
@@ -422,7 +414,6 @@ if (sortOrder === 'default') {
     let client;
     try {
       client = await pool.connect();
-      const startTime = Date.now();
       const result = await client.query(query);
       
       if (!result.rows || result.rows.length === 0) {

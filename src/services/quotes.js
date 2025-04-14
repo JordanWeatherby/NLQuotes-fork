@@ -4,8 +4,6 @@ import axios from 'axios'
 const isOnRender = window.location.hostname.includes('render.com') || 
                    window.location.hostname.includes('onrender.com');
 
-// Check if current protocol is HTTPS
-const isHttps = window.location.protocol === 'https:';
 
 // Define possible API path prefixes to try
 const pathPrefixes = [
@@ -42,7 +40,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 let isMigrationMode = false; // Migration complete - set to false to enable searches
 
 // Helper to try API calls with different path prefixes and base URLs
-const makeApiRequest = async (endpoint, method = 'get', params = null, data = null) => {
+const makeApiRequest = async (endpoint, method = 'get', params = null) => {
     const errors = [];
     for (const baseUrl of possibleBaseUrls) {
         // Try each path prefix
