@@ -517,7 +517,6 @@ const App = () => {
     const [submittingFeedback, setSubmittingFeedback] = useState(false);
     const [selectedGame, setSelectedGame] = useState("all");
     
-    const strict = false;
     // Add meta viewport tag for responsive design
     useEffect(() => {
         // Check if viewport meta tag exists
@@ -540,7 +539,7 @@ const App = () => {
         setSelectedChannel(channelId);
         setPage(1);
         if (searchTerm.trim()) {
-            fetchQuotes(1, channelId, selectedYear, sortOrder, strict, selectedGame);
+            fetchQuotes(1, channelId, selectedYear, sortOrder, selectedGame);
         }
     };
 
@@ -550,7 +549,7 @@ const App = () => {
         if (value.length === 4) {
             setPage(1);
             if (searchTerm.trim()) {
-                fetchQuotes(1, selectedChannel, value, sortOrder, strict, selectedGame);
+                fetchQuotes(1, selectedChannel, value, sortOrder, selectedGame);
             }
         }
     };
@@ -560,7 +559,7 @@ const App = () => {
         setSortOrder(value);
         setPage(1);
         if (searchTerm.trim()) {
-            fetchQuotes(1, selectedChannel, selectedYear, value, strict, selectedGame);
+            fetchQuotes(1, selectedChannel, selectedYear, value, selectedGame);
         }
     };
 
@@ -568,7 +567,7 @@ const App = () => {
         e.preventDefault();
         if (searchTerm.trim().length > 2) {
             setPage(1);
-            fetchQuotes(1, selectedChannel, selectedYear, sortOrder, strict, selectedGame);
+            fetchQuotes(1, selectedChannel, selectedYear, sortOrder, selectedGame);
         } else {
             setError('Please enter at least 3 characters to search');
             setTimeout(() => setError(null), 3000);
@@ -577,14 +576,14 @@ const App = () => {
 
     const handlePageChange = (newPage) => {
         setPage(newPage);
-        fetchQuotes(newPage, selectedChannel, selectedYear, sortOrder, strict, selectedGame);
+        fetchQuotes(newPage, selectedChannel, selectedYear, sortOrder, selectedGame);
     };
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter' && !loading) {
             if (searchTerm.trim().length > 2) {
                 setPage(1);
-                fetchQuotes(1, selectedChannel, selectedYear, sortOrder, strict, selectedGame);
+                fetchQuotes(1, selectedChannel, selectedYear, sortOrder, selectedGame);
             } else {
                 setError('Please enter at least 3 characters to search');
                 setTimeout(() => setError(null), 3000);
@@ -625,11 +624,11 @@ const App = () => {
         setSelectedGame(value);
         setPage(1);
         if (searchTerm.trim()) {
-            fetchQuotes(1, selectedChannel, selectedYear, sortOrder, strict, value);
+            fetchQuotes(1, selectedChannel, selectedYear, sortOrder, value);
         }
     };
 
-    const fetchQuotes = async (pageNum = page, channel = selectedChannel, year = selectedYear, sort = sortOrder, strictMode = strict, game = selectedGame) => {
+    const fetchQuotes = async (pageNum = page, channel = selectedChannel, year = selectedYear, sort = sortOrder, game = selectedGame) => {
         if (searchTerm.trim()) {
             setLoading(true);
             setError(null);
@@ -639,7 +638,6 @@ const App = () => {
                 const response = await query.getAll(
                     searchTerm,
                     pageNum,
-                    strictMode,
                     channel,
                     "searchText",
                     year,
@@ -841,7 +839,6 @@ const App = () => {
                 fetchQuotes={fetchQuotes}
                 page={page}
                 selectedChannel={selectedChannel}
-                strict={strict} 
             />
 
             {!hasSearched && <Disclaimer />}

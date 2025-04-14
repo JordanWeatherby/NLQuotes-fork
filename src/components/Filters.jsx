@@ -12,7 +12,6 @@ export const Filters = ({
   fetchQuotes,
   page,
   selectedChannel,
-  strict
 }) => (
   <div className="filter-container">
     <div className="filter-group">
@@ -52,7 +51,7 @@ export const Filters = ({
             onClick={() => {
                 setSelectedGame("all");
                 if (searchTerm.trim()) {
-                    fetchQuotes(page, selectedChannel, selectedYear, sortOrder, strict, "all");
+                    fetchQuotes(page, selectedChannel, selectedYear, sortOrder, "all");
                 }
             }}
             style={{
